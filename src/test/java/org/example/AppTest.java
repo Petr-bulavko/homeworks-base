@@ -12,7 +12,20 @@ public class AppTest {
      * Rigorous Test :-)
      */
     @Test
-    public void shouldAnswerWithTrue() {
-        assertTrue(1 > 0);
+    public void zeroLessThenOne() {
+        int max = App.max(1, 0);
+        assertEquals(1, max);
+    }
+
+    @Test
+    public void zeroLessThenOneReversed() {
+        int max = App.max(0, 1);
+        assertEquals(1, max);
+    }
+
+    @Test
+    public void fail() {
+        int max = App.max(1, 0);
+        assertEquals(0, max);
     }
 }
