@@ -23,9 +23,4 @@ public class AppTest {
         assertEquals(1, max);
     }
 
-    @Test
-    public void fail() {
-        int max = App.max(1, 0);
-        assertEquals(0, max);
-    }
 }
