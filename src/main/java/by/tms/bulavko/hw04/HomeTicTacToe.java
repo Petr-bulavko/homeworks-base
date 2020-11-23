@@ -11,6 +11,7 @@ public class HomeTicTacToe {
                 System.out.print(a[i][j] + " ");
             }
             System.out.println();
+
         }
     }
 }

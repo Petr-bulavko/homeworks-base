@@ -3,7 +3,7 @@ package by.tms.bulavko.hw04;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Home_1 {
+public class HomeOne {
     public static void main(String[] args) {
         Scanner num = new Scanner(System.in);
         Random random = new Random();
