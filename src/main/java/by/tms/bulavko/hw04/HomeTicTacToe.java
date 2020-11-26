@@ -1,5 +1,5 @@
 package by.tms.bulavko.hw04;
-
+//Как нибудь позже сделаю крестики-нолики
 public class HomeTicTacToe {
     public static void main(String[] args) {
         int b = 0;
