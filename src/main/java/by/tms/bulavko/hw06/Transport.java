@@ -72,6 +72,8 @@ class MilitaryTransport extends AirTransport {
 
         Random random = new Random();
         boolean bailout = random.nextBoolean();
+
+        System.out.println("У нас есть система катапультирования?");
         if (bailout == true) {
 
             System.out.println("Катапультирование прошло успешно");
@@ -162,11 +164,25 @@ class PassengerCar extends LandTransport {
     и полученный результат потом обратно вызвать результат в метод numberOfKilometers
     или можно как-то подругому сделать
     */
+    //Я не знаю как это получилось, но получилось осталось понять)
+    private double numberOfFuel;
+
+    public double getNumberOfFuel() {
+
+        return numberOfFuel;
+
+    }
+
+    public void setNumberOfFuel(double numberOfFuel) {
+
+        this.numberOfFuel = numberOfFuel;
+
+    }
+
+
     private void numberOfFuelConsumption() {
 
-        double numberOfFuel;
-        numberOfFuel = resultKilometers / fuelConsumption;
-        System.out.println(numberOfFuel);
+        numberOfFuel = resultKilometers / 100 * fuelConsumption;
 
     }
 
@@ -175,8 +191,8 @@ class PassengerCar extends LandTransport {
 
     public void numberOfKilometers() {
 
+
         PassengerCar passengerCar = new PassengerCar();
-        passengerCar.numberOfFuelConsumption();
 
         System.out.println("Введите время в часах: ");
 
@@ -184,13 +200,20 @@ class PassengerCar extends LandTransport {
 
         resultKilometers = time * maximumSpeed;
 
+        passengerCar.setNumberOfFuel(resultKilometers / 100 * fuelConsumption);
+
+        passengerCar.numberOfFuelConsumption();
+
+        numberOfFuel = resultKilometers / 100 * fuelConsumption;
+
         System.out.println("За время " + time + " ч автомобиль " +
                 brand + " двигаясь с максимальной скоростью " + maximumSpeed
                 + " км/ч проедет " + resultKilometers + " км " +
-                "и изросходует " + " литров топлива");
+                "и изросходует " + getNumberOfFuel() + " литров топлива");
         System.out.println();
 
     }
+
 
 }
 
