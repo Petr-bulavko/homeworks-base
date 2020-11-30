@@ -3,14 +3,25 @@ package by.tms.bulavko.hw06;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Transport {
+public class Transport implements PowerAware {
     double power;
     int maximumSpeed;
     int weight;
-    double kilowatt = 0.74;
-    double result = 0;
     String brand;
-    Scanner scanner = new Scanner(System.in);
+    Scanner scanner;
+
+    public Transport() {
+        this(new Scanner(System.in));
+    }
+
+    public Transport(Scanner scanner) {//конструктор для обеспечения низкой связанности класса
+        this.scanner = scanner;
+    }
+
+    @Override
+    public double getPowerInHorses() {
+        return power;
+    }
 }
 
 /*Спросить на счет метода для перевода л.с. в кВт, я просто в каждом посчитал)
@@ -26,19 +37,18 @@ class AirTransport extends Transport {
 class MilitaryTransport extends AirTransport {
 
     boolean bailoutSystem = true;
-    int numberOfMissiles = 20;
+    private int numberOfMissiles = 20;//Использовать минимально возможный/необходимый модификатор видимости
+    private final Random random = new Random();
 
     public void displayInfoMilitaryTransport() {
-
-        result = kilowatt * power;
-
+        //String.format and returning formatted String object so it could be used by caller
         System.out.printf("Марка = %s \t Максимальная скорость = %s км/ч \t Масса = %s кг \t \n" +
                         "Мощность = %s л.с. \t" +
                         "Размах крыльев = %s м \t Минимальное растояние для взлета = %s м \t \n" +
                         "Катапультирование = %s \t Кол-во ракет = %s шт. \t \n" +
                         "Перевод л.с. в кВт = %s кВт \n",
-                brand, maximumSpeed, weight, power, wingspan,
-                minimumRunwayLengthForTakeOff, bailoutSystem, numberOfMissiles, result);
+                brand, maximumSpeed, weight, getPowerInHorses(), wingspan,
+                minimumRunwayLengthForTakeOff, bailoutSystem, numberOfMissiles, getPowerInKilowatts());
 
     }
 
@@ -70,11 +80,10 @@ class MilitaryTransport extends AirTransport {
     //тут сонар вроде как ругается но и не ругается
     public void displayInfoBailoutSystem() {
 
-        Random random = new Random();
         boolean bailout = random.nextBoolean();
 
         System.out.println("У нас есть система катапультирования?");
-        if (bailout == true) {
+        if (bailout) {
 
             System.out.println("Катапультирование прошло успешно");
 
@@ -91,11 +100,17 @@ class MilitaryTransport extends AirTransport {
 class CivilTransport extends AirTransport {
 
     int numberOfPassengers = 3;
-    boolean businessClassAvailability = true;
+    boolean businessClassAvailable = true;
+
+    public boolean isBusinessClassAvailable() {//getter for boolean uses is prefix
+        return businessClassAvailable;
+    }
+
+    public int getNumberOfPassengers() {
+        return numberOfPassengers;
+    }
 
     public void displayInfoCivilTransport() {
-
-        result = kilowatt * power;
 
         System.out.printf("Марка = %s \t Максимальная скорость = %s км/ч \t Масса = %s кг \t \n" +
                         "Мощность = %s л.с. \t" +
@@ -103,7 +118,7 @@ class CivilTransport extends AirTransport {
                         "Кол-во пассажиров = %s \t Бизнес класс = %s \t \n" +
                         "Перевод л.с. в кВт = %s кВт \n",
                 brand, maximumSpeed, weight, power, wingspan,
-                minimumRunwayLengthForTakeOff, numberOfPassengers, businessClassAvailability, result);
+                minimumRunwayLengthForTakeOff, numberOfPassengers, businessClassAvailable, getPowerInKilowatts());
 
     }
 
@@ -147,14 +162,12 @@ class PassengerCar extends LandTransport {
     //Короче не понял почему с %s и %d не показывает ошибку
     public void displayInfoPassengerCar() {
 
-        result = kilowatt * power;
-
-        System.out.printf("Марка = %s\t Тип кузова = %s\t Максимальная скорость = %s км/ч \t \n" +
+        System.out.printf("Марка = %s\t Тип кузова = %s\t Максимальная скорость = %f км/ч \t \n" +
                         "Масса = %s кг \t Мощность = %s л.с. \t Кол-во колес = %d \t \n" +
                         "Кол-во пассажиров = %s \t Расход топлива = %s л/100км \n" +
                         "Перевод л.с. в кВт = %s кВт \n",
-                brand, typeCarcase, maximumSpeed, weight, power,
-                numberOfWheels, numberOfPassengers, fuelConsumption, result);
+                brand, typeCarcase, (float) maximumSpeed, weight, power,
+                numberOfWheels, numberOfPassengers, fuelConsumption, getPowerInKilowatts());
 
     }
 
@@ -165,27 +178,15 @@ class PassengerCar extends LandTransport {
     или можно как-то подругому сделать
     */
     //Я не знаю как это получилось, но получилось осталось понять)
-    private double numberOfFuel;
 
-    public double getNumberOfFuel() {
+    private Double numberOfFuel = null;
 
+    private double numberOfFuelConsumption() {
+        if (numberOfFuel == null) {
+            numberOfFuel = resultKilometers / 100 * fuelConsumption;
+        }
         return numberOfFuel;
-
     }
-
-    public void setNumberOfFuel(double numberOfFuel) {
-
-        this.numberOfFuel = numberOfFuel;
-
-    }
-
-
-    private void numberOfFuelConsumption() {
-
-        numberOfFuel = resultKilometers / 100 * fuelConsumption;
-
-    }
-
 
     double resultKilometers;
 
@@ -200,16 +201,12 @@ class PassengerCar extends LandTransport {
 
         resultKilometers = time * maximumSpeed;
 
-        passengerCar.setNumberOfFuel(resultKilometers / 100 * fuelConsumption);
-
-        passengerCar.numberOfFuelConsumption();
-
-        numberOfFuel = resultKilometers / 100 * fuelConsumption;
+        double numberOfFuel = passengerCar.numberOfFuelConsumption();
 
         System.out.println("За время " + time + " ч автомобиль " +
                 brand + " двигаясь с максимальной скоростью " + maximumSpeed
                 + " км/ч проедет " + resultKilometers + " км " +
-                "и изросходует " + getNumberOfFuel() + " литров топлива");
+                "и изросходует " + numberOfFuel + " литров топлива");
         System.out.println();
 
     }
@@ -223,13 +220,11 @@ class Truck extends LandTransport {
 
     public void displayInfoTruck() {
 
-        result = kilowatt * power;
-
         System.out.printf("Марка = %s \t Максимальная скорость = %s км/ч \t Масса = %s кг \t \n" +
                         "Мощность = %s л.с. \t Кол-во колес = %d \t" +
                         "Грузоподъемность = %s т \t \n" +
                         "Перевод л.с. в кВт = %s кВт \n",
-                brand, maximumSpeed, weight, power, numberOfWheels, load, result);
+                brand, maximumSpeed, weight, power, numberOfWheels, load, getPowerInKilowatts());
 
     }
 
